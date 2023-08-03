@@ -1,0 +1,16 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+
+
+.git
+node_modules
+.idea
+
+*.env
+.env.*
+env.yml
+.DS_Store
+
+credential

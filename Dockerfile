@@ -8,6 +8,13 @@ RUN apt-get update \
     && apt-get install -y google-chrome-stable fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst fonts-freefont-ttf libxss1 \
       --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
+
+ENV USERNAME Ja_nawarut
+ENV DOMAIN @kkumail.com
+ENV PASSWORD ja23102543
+ENV URL https://oauth.kku.ac.th/authorize?client_id=33ee975f82e6d6ec&redirect_uri=http%3A%2F%2Fapp-reserve.kku.ac.th%2Fuser%2Fcallback&response_type=code&state=
+ENV DURATION week
+
 WORKDIR /app
 COPY ./package.json /app
 RUN npm install
