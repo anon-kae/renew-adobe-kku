@@ -8,7 +8,8 @@ require('dotenv').config()
 async function OpenWebSiteKKUSoftwareLicense() {
   try {
     const browser = await puppeteer.launch({
-      headless: false
+      headless: false,
+      executablePath: '/usr/bin/google-chrome',
     });
     const page = await browser.newPage();
 
@@ -19,6 +20,7 @@ async function OpenWebSiteKKUSoftwareLicense() {
 
     const url = page.url();
     console.log(url)
+    console.log('Running to Open web KKU Software License Reservation')
     return { url, page, browser };
   } catch (error) {
     console.log(error);
@@ -39,6 +41,7 @@ async function fillUsernameAndPasswordByUrl() {
     await page.evaluate((arg) => document.getElementsByName("LoginForm[domain]")[0].value = arg, process.env.DOMAIN);
     await page.click('button[type="submit"]');
 
+    console.log('Running to Fill username and password')
     return { page, browser };
   } catch (error) {
     console.log(error);
@@ -58,6 +61,7 @@ async function selectedDayLicense() {
 
     const url = page.url();
 
+    console.log('Running to Selected day of license')
     return { url, page, browser };
   } catch (error) {
     console.log(error);
@@ -82,7 +86,7 @@ async function selectedAdobeCreativeCloud() {
 
     // const a = await page.$('.active-container')
     // console.log(a)
-
+    console.log('Running to Select Adobe Creative Cloud')
     await browser.close();
   } catch (error) {
     console.log(error);
@@ -92,6 +96,7 @@ async function selectedAdobeCreativeCloud() {
 
 (async () => {
   try {
+    console.log('running to starting')
     schedule.scheduleJob('*/1 * * * *', async function () {
       await selectedAdobeCreativeCloud()
     });
