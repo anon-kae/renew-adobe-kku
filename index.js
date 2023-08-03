@@ -37,7 +37,7 @@ async function fillUsernameAndPasswordByUrl() {
   try {
     const { url, page } = await OpenWebSiteKKUSoftwareLicense();
 
-    await page.goto(url);
+    await page.goto(url, { waitUntil: ['networkidle2', 'domcontentloaded'] });
     await page.waitForSelector('#LoginForm_username', { visible:true });
     await page.type('#LoginForm_username', process.env.USERNAME);
     await page.waitForSelector('#LoginForm_password', { visible:true });
@@ -81,7 +81,7 @@ async function selectedAdobeCreativeCloud() {
     const { url, page } = await selectedDayLicense();
 
     page.waitForNavigation(100, { waitUntil: ['networkidle2', 'domcontentloaded'] });
-    await page.goto(url);
+    await page.goto(url, { waitUntil: ['networkidle2', 'domcontentloaded'] });
 
     if (await page.waitForSelector('.btn-reserve', { timeout: 5000 })) {
       console.log("found .btn-reserve")
