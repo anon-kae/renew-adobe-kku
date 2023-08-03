@@ -2,12 +2,13 @@ const puppeteer = require('puppeteer');
 const schedule = require('node-schedule');
 require('dotenv').config()
 
+let browser = null;
 /**
  * Open web KKU Software License Reservation
  */
 async function OpenWebSiteKKUSoftwareLicense() {
   try {
-    const browser = await puppeteer.launch({
+    browser = await puppeteer.launch({
       // headless: false,
       executablePath: '/usr/bin/google-chrome',
       // args: ['--no-sandbox', '--disable-setuid-sandbox']
@@ -22,7 +23,7 @@ async function OpenWebSiteKKUSoftwareLicense() {
     const url = page.url();
     console.log(url)
     console.log('Running to Open web KKU Software License Reservation')
-    return { url, page, browser };
+    return { url, page };
   } catch (error) {
     console.log(error);
     await browser.close();
@@ -34,7 +35,7 @@ async function OpenWebSiteKKUSoftwareLicense() {
  */
 async function fillUsernameAndPasswordByUrl() {
   try {
-    const { url, page, browser } = await OpenWebSiteKKUSoftwareLicense();
+    const { url, page } = await OpenWebSiteKKUSoftwareLicense();
 
     await page.goto(url);
     await page.type('#LoginForm_username', process.env.USERNAME);
@@ -43,7 +44,7 @@ async function fillUsernameAndPasswordByUrl() {
     await page.click('button[type="submit"]');
 
     console.log('Running to Fill username and password')
-    return { page, browser };
+    return { page };
   } catch (error) {
     console.log(error);
     await browser.close();
@@ -55,7 +56,7 @@ async function fillUsernameAndPasswordByUrl() {
  */
 async function selectedDayLicense() {
   try {
-    const { page, browser } = await fillUsernameAndPasswordByUrl();
+    const { page } = await fillUsernameAndPasswordByUrl();
     await page.waitForNavigation({ waitUntil: ['load', 'networkidle2'] });
     await page.evaluate((arg) => document.getElementsByName("token_duration")[0].value = arg, process.env.DURATION);
     await page.click('button[name="authorize"]');
@@ -63,7 +64,7 @@ async function selectedDayLicense() {
     const url = page.url();
 
     console.log('Running to Selected day of license')
-    return { url, page, browser };
+    return { url, page };
   } catch (error) {
     console.log(error);
     await browser.close();
@@ -75,7 +76,7 @@ async function selectedDayLicense() {
  */
 async function selectedAdobeCreativeCloud() {
   try {
-    const { url, page, browser } = await selectedDayLicense();
+    const { url, page } = await selectedDayLicense();
 
     page.waitForNavigation(100, { waitUntil: ['networkidle2', 'domcontentloaded'] });
     await page.goto(url);
