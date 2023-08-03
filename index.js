@@ -38,7 +38,9 @@ async function fillUsernameAndPasswordByUrl() {
     const { url, page } = await OpenWebSiteKKUSoftwareLicense();
 
     await page.goto(url);
+    await page.waitForSelector('#LoginForm_username', { visible:true });
     await page.type('#LoginForm_username', process.env.USERNAME);
+    await page.waitForSelector('#LoginForm_password', { visible:true });
     await page.type('#LoginForm_password', process.env.PASSWORD);
     await page.evaluate((arg) => document.getElementsByName("LoginForm[domain]")[0].value = arg, process.env.DOMAIN);
     await page.click('button[type="submit"]');
