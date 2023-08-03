@@ -11,7 +11,7 @@ async function OpenWebSiteKKUSoftwareLicense() {
     browser = await puppeteer.launch({
       // headless: false,
       executablePath: '/usr/bin/google-chrome',
-      // args: ['--no-sandbox', '--disable-setuid-sandbox']
+      args: ['--no-sandbox', '--disable-setuid-sandbox']
     });
     const page = await browser.newPage();
 
