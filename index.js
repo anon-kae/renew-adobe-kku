@@ -10,7 +10,7 @@ async function OpenWebSiteKKUSoftwareLicense() {
   try {
     browser = await puppeteer.launch({
       // headless: false,
-      executablePath: '/usr/bin/google-chrome',
+      // executablePath: '/usr/bin/google-chrome',
       args: ['--no-sandbox', '--disable-setuid-sandbox']
     });
     const page = await browser.newPage();
@@ -26,7 +26,7 @@ async function OpenWebSiteKKUSoftwareLicense() {
     return { url, page };
   } catch (error) {
     console.log(error);
-    await browser.close();
+    await browser?.close();
   }
 }
 
@@ -49,7 +49,7 @@ async function fillUsernameAndPasswordByUrl() {
     return { page };
   } catch (error) {
     console.log(error);
-    await browser.close();
+    await browser?.close();
   }
 }
 
@@ -69,7 +69,7 @@ async function selectedDayLicense() {
     return { url, page };
   } catch (error) {
     console.log(error);
-    await browser.close();
+    await browser?.close();
   }
 }
 
@@ -91,10 +91,10 @@ async function selectedAdobeCreativeCloud() {
     // const a = await page.$('.active-container')
     // console.log(a)
     console.log('Running to Select Adobe Creative Cloud')
-    await browser.close();
+    await browser?.close();
   } catch (error) {
     console.log(error);
-    await browser.close();
+    await browser?.close();
   }
 }
 
