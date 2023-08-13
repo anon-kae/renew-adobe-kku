@@ -13,6 +13,7 @@ async function OpenWebSiteKKUSoftwareLicense() {
       // executablePath: '/usr/bin/google-chrome',
       args: ['--no-sandbox', '--disable-setuid-sandbox']
     });
+
     const page = await browser.newPage();
 
     await page.goto(process.env.URL);
@@ -39,9 +40,10 @@ async function fillUsernameAndPasswordByUrl() {
 
     await page.goto(url, { waitUntil: ['networkidle2', 'domcontentloaded'] });
     await page.waitForSelector('#LoginForm_username', { visible:true });
-    await page.type('#LoginForm_username', process.env.USERNAME);
+    await page.evaluate((arg) => document.getElementById("LoginForm_username").value = arg, process.env.USERNAME);
     await page.waitForSelector('#LoginForm_password', { visible:true });
-    await page.type('#LoginForm_password', process.env.PASSWORD);
+    await page.type('#LoginForm_password', );
+    await page.evaluate((arg) => document.getElementById("LoginForm_password").value = arg, process.env.PASSWORD);
     await page.evaluate((arg) => document.getElementsByName("LoginForm[domain]")[0].value = arg, process.env.DOMAIN);
     await page.click('button[type="submit"]');
 
@@ -101,7 +103,7 @@ async function selectedAdobeCreativeCloud() {
 (async () => {
   try {
     console.log('running to starting')
-    schedule.scheduleJob('*/1 * * * *', async function () {
+    schedule.scheduleJob('*/5 * * * *', async function () {
       await selectedAdobeCreativeCloud()
     });
   } catch (error) {
