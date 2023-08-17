@@ -1,5 +1,4 @@
 const puppeteer = require('puppeteer');
-const schedule = require('node-schedule');
 require('dotenv').config()
 
 let browser = null;
@@ -102,10 +101,9 @@ async function selectedAdobeCreativeCloud() {
 (async () => {
   try {
     console.log('running to starting')
-    // await selectedAdobeCreativeCloud()
-    schedule.scheduleJob('*/5 * * * *', async function () {
+    setInterval(async () => {
       await selectedAdobeCreativeCloud()
-    });
+    }, 1000 * 60);
   } catch (error) {
     console.log(error);
   }
