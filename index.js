@@ -8,9 +8,8 @@ let browser = null;
 async function OpenWebSiteKKUSoftwareLicense() {
   try {
     browser = await puppeteer.launch({
-      // headless: false,
-      // executablePath: '/usr/bin/google-chrome',
-      args: ['--no-sandbox', '--disable-setuid-sandbox']
+      headless: true,
+      args: ['--no-sandbox']
     });
 
     const page = await browser.newPage();
