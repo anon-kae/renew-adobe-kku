@@ -2,109 +2,78 @@ const puppeteer = require('puppeteer');
 require('dotenv').config()
 
 let browser = null;
-/**
- * Open web KKU Software License Reservation
- */
-async function OpenWebSiteKKUSoftwareLicense() {
-  try {
+
+async function initializeBrowser() {
+  if (!browser) {
     browser = await puppeteer.launch({
       headless: true,
       args: ['--no-sandbox']
     });
-
-    const page = await browser.newPage();
-
-    await page.goto(process.env.URL);
-
-    await page.click('button[value="kkumail"]');
-    page.waitForNavigation(100, { waitUntil: ['networkidle2', 'domcontentloaded'] })
-
-    const url = page.url();
-    console.log(url)
-    console.log('Running to Open web KKU Software License Reservation')
-    return { url, page };
-  } catch (error) {
-    console.log(error);
-    await browser?.close();
   }
 }
 
-/**
- * Fill username and password
- */
+async function OpenWebSiteKKUSoftwareLicense() {
+  await initializeBrowser();
+  const page = await browser.newPage();
+
+  await page.goto(process.env.URL);
+
+  await page.click('button[value="kkumail"]');
+  await page.waitForNavigation({ waitUntil: ['networkidle2', 'domcontentloaded'] });
+
+  const url = page.url();
+  return { url, page };
+}
+
 async function fillUsernameAndPasswordByUrl() {
-  try {
-    const { url, page } = await OpenWebSiteKKUSoftwareLicense();
+  const { url, page } = await OpenWebSiteKKUSoftwareLicense();
 
-    await page.goto(url, { waitUntil: ['networkidle2', 'domcontentloaded'] });
-    await page.waitForSelector('#LoginForm_username', { visible:true });
-    await page.evaluate((arg) => document.getElementById("LoginForm_username").value = arg, process.env.USERNAME);
-    await page.waitForSelector('#LoginForm_password', { visible:true });
-    await page.evaluate((arg) => document.getElementById("LoginForm_password").value = arg, process.env.PASSWORD);
-    await page.evaluate((arg) => document.getElementsByName("LoginForm[domain]")[0].value = arg, process.env.DOMAIN);
-    await page.click('button[type="submit"]');
+  await page.goto(url, { waitUntil: ['networkidle2', 'domcontentloaded'] });
+  await page.waitForSelector('#LoginForm_username', { visible: true });
+  await page.type("#LoginForm_username", process.env.USERNAME);
+  await page.waitForSelector('#LoginForm_password', { visible: true });
+  await page.type("#LoginForm_password", process.env.PASSWORD);
+  await page.select("select[name='LoginForm[domain]']", process.env.DOMAIN);
+  await page.click('button[type="submit"]');
 
-    console.log('Running to Fill username and password')
-    return { page };
-  } catch (error) {
-    console.log(error);
-    await browser?.close();
-  }
+  return { page };
 }
 
-/**
- * Selected day of license
- */
 async function selectedDayLicense() {
-  try {
-    const { page } = await fillUsernameAndPasswordByUrl();
-    await page.waitForNavigation({ waitUntil: ['load', 'networkidle2'] });
-    await page.evaluate((arg) => document.getElementsByName("token_duration")[0].value = arg, process.env.DURATION);
-    await page.click('button[name="authorize"]');
+  const { page } = await fillUsernameAndPasswordByUrl();
+  await page.waitForNavigation({ waitUntil: ['load', 'networkidle2'] });
+  await page.select("select[name='token_duration']", process.env.DURATION);
+  await page.click('button[name="authorize"]');
 
-    const url = page.url();
-
-    console.log('Running to Selected day of license')
-    return { url, page };
-  } catch (error) {
-    console.log(error);
-    await browser?.close();
-  }
+  const url = page.url();
+  return { url, page };
 }
 
-/**
- * Select Adobe Creative Cloud
- */
 async function selectedAdobeCreativeCloud() {
+  const { url, page } = await selectedDayLicense();
+
+  await page.waitForNavigation({ waitUntil: ['networkidle2', 'domcontentloaded'] });
+  await page.goto(url, { waitUntil: ['networkidle2', 'domcontentloaded'] });
+
   try {
-    const { url, page } = await selectedDayLicense();
-
-    page.waitForNavigation(100, { waitUntil: ['networkidle2', 'domcontentloaded'] });
-    await page.goto(url, { waitUntil: ['networkidle2', 'domcontentloaded'] });
-
-    if (await page.waitForSelector('.btn-reserve', { timeout: 5000 })) {
-      console.log("found .btn-reserve")
-      await page.click('.btn-reserve');
-    } else console.log("not found");
-
-    // const a = await page.$('.active-container')
-    // console.log(a)
-    console.log('Running to Select Adobe Creative Cloud')
-    await browser?.close();
-  } catch (error) {
-    console.log(error);
-    await browser?.close();
+    await page.waitForSelector('.btn-reserve', { timeout: 5000 });
+    await page.click('.btn-reserve');
+  } catch (e) {
+    console.log("Button .btn-reserve not found");
   }
 }
 
 (async () => {
-  try {
-    console.log('running to starting')
-    setInterval(async () => {
-      await selectedAdobeCreativeCloud()
-    }, 1000 * 60);
-  } catch (error) {
-    console.log(error);
-  }
+  console.log('Starting...');
+  setInterval(async () => {
+    try {
+      await selectedAdobeCreativeCloud();
+      console.log('Successfully completed a cycle.');
+    } catch (error) {
+      console.error('Error during execution:', error);
+    } finally {
+      await browser.close();
+      browser = null;  // Reset the browser instance for the next cycle
+    }
+  }, 1000 * 60);
 })();
-
