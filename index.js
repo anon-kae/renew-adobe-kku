@@ -74,5 +74,5 @@ async function selectedAdobeCreativeCloud() {
       await browser.close();
       browser = null;  // Reset the browser instance for the next cycle
     }
-  }, 1000 * 60);
+  }, 180000);
 })();
