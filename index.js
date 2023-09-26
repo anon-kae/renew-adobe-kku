@@ -16,7 +16,7 @@ async function OpenWebSiteKKUSoftwareLicense() {
   await initializeBrowser();
   const page = await browser.newPage();
 
-  await page.goto(process.env.URL);
+  await page.goto(process.env.URL, {timeout: 60000});
 
   await page.click('button[value="kkumail"]');
   await page.waitForNavigation({ waitUntil: ['networkidle2', 'domcontentloaded'] });
