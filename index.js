@@ -16,10 +16,9 @@ async function OpenWebSiteKKUSoftwareLicense() {
   await initializeBrowser();
   const page = await browser.newPage();
 
-  await page.goto(process.env.URL, {timeout: 60000});
+  await page.goto(process.env.URL, { timeout: 6000 });
 
   await page.click('button[value="kkumail"]');
-  await page.waitForNavigation({ waitUntil: ['networkidle2', 'domcontentloaded'] });
 
   const url = page.url();
   return { url, page };
@@ -28,14 +27,14 @@ async function OpenWebSiteKKUSoftwareLicense() {
 async function fillUsernameAndPasswordByUrl() {
   const { url, page } = await OpenWebSiteKKUSoftwareLicense();
 
-  await page.goto(url, { waitUntil: ['networkidle2', 'domcontentloaded'] });
-  await page.waitForSelector('#LoginForm_username', { visible: true });
+  await page.goto(url);
+  // await page.waitForSelector('#LoginForm_username', { visible: true });
   await page.type("#LoginForm_username", process.env.USERNAME);
-  await page.waitForSelector('#LoginForm_password', { visible: true });
+  // await page.waitForSelector('#LoginForm_password', { visible: true });
   await page.type("#LoginForm_password", process.env.PASSWORD);
   await page.select("select[name='LoginForm[domain]']", process.env.DOMAIN);
   await page.click('button[type="submit"]');
-
+  console.log('Successfully filled in username and password')
   return { page };
 }
 
@@ -44,7 +43,7 @@ async function selectedDayLicense() {
   await page.waitForNavigation({ waitUntil: ['load', 'networkidle2'] });
   await page.select("select[name='token_duration']", process.env.DURATION);
   await page.click('button[name="authorize"]');
-
+  console.log('Successfully selected day license')
   const url = page.url();
   return { url, page };
 }
@@ -52,7 +51,7 @@ async function selectedDayLicense() {
 async function selectedAdobeCreativeCloud() {
   const { url, page } = await selectedDayLicense();
 
-  await page.waitForNavigation({ waitUntil: ['networkidle2', 'domcontentloaded'] });
+  // await page.waitForNavigation({ waitUntil: ['networkidle2', 'domcontentloaded'] });
   await page.goto(url, { waitUntil: ['networkidle2', 'domcontentloaded'] });
 
   try {
