@@ -28,9 +28,9 @@ async function fillUsernameAndPasswordByUrl() {
   const { url, page } = await OpenWebSiteKKUSoftwareLicense();
 
   await page.goto(url);
-  // await page.waitForSelector('#LoginForm_username', { visible: true });
+  await page.waitForSelector('#LoginForm_username', { visible: true });
   await page.type("#LoginForm_username", process.env.USERNAME);
-  // await page.waitForSelector('#LoginForm_password', { visible: true });
+  await page.waitForSelector('#LoginForm_password', { visible: true });
   await page.type("#LoginForm_password", process.env.PASSWORD);
   await page.select("select[name='LoginForm[domain]']", process.env.DOMAIN);
   await page.click('button[type="submit"]');
@@ -51,7 +51,7 @@ async function selectedDayLicense() {
 async function selectedAdobeCreativeCloud() {
   const { url, page } = await selectedDayLicense();
 
-  // await page.waitForNavigation({ waitUntil: ['networkidle2', 'domcontentloaded'] });
+  await page.waitForNavigation({ waitUntil: ['networkidle2', 'domcontentloaded'] });
   await page.goto(url, { waitUntil: ['networkidle2', 'domcontentloaded'] });
 
   try {
@@ -74,5 +74,5 @@ async function selectedAdobeCreativeCloud() {
       await browser.close();
       browser = null;  // Reset the browser instance for the next cycle
     }
-  }, 180000);
+  }, 1000 * 60);
 })();
