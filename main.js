@@ -69,8 +69,8 @@ async function selectedAdobeCreativeCloud(browser, page, url) {
 async function main() {
   const browser = await puppeteer.launch({
     headless: "new",
-    // executablePath: "/usr/bin/google-chrome",
-    // args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    executablePath: "/usr/bin/google-chrome",
+    args: ["--no-sandbox", "--disable-setuid-sandbox"],
   });
 
   try {
