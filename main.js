@@ -67,25 +67,25 @@ async function selectedAdobeCreativeCloud(browser, page, url) {
 }
 
 async function main() {
-  const browser = await puppeteer.launch({
-    headless: "new",
-    // executablePath: "/usr/bin/google-chrome",
-    // args: ["--no-sandbox", "--disable-setuid-sandbox"],
-  });
-  const page = await browser.newPage();
-  await page.setViewport({ width: 1280, height: 800 });
-
-  // open website KKU Software License
-  const kkuLicense = await openWebSiteKKUSoftwareLicense(browser, page);
-  // login
-  await login(browser, page, kkuLicense.url);
-  // select day license
-  const dayLicense = await selectedDayLicense(browser, page);
-  // select Adobe Creative Cloud
-  await selectedAdobeCreativeCloud(browser, page, dayLicense.url);
-
-  // Reserve license
   try {
+    const browser = await puppeteer.launch({
+      headless: "new",
+      executablePath: "/usr/bin/google-chrome",
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    });
+    const page = await browser.newPage();
+    await page.setViewport({ width: 1280, height: 800 });
+
+    // open website KKU Software License
+    const kkuLicense = await openWebSiteKKUSoftwareLicense(browser, page);
+    // login
+    await login(browser, page, kkuLicense.url);
+    // select day license
+    const dayLicense = await selectedDayLicense(browser, page);
+    // select Adobe Creative Cloud
+    await selectedAdobeCreativeCloud(browser, page, dayLicense.url);
+
+    // Reserve license
     const button = await page.$("button#btn_reserve.btn-reserve");
     if (button) {
       await page.click("#btn_reserve.btn-reserve");
