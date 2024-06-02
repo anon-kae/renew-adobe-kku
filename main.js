@@ -69,8 +69,8 @@ async function selectedAdobeCreativeCloud(browser, page, url) {
 async function main() {
   const browser = await puppeteer.launch({
     headless: "new",
-    executablePath: "/usr/bin/google-chrome",
-    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    // executablePath: "/usr/bin/google-chrome",
+    // args: ["--no-sandbox", "--disable-setuid-sandbox"],
   });
 
   try {
@@ -103,9 +103,17 @@ async function main() {
 }
 
 (async () => {
-  console.log("Bot started, wait for every 1 minute to start the process.");
+  console.log("============================================================");
+  console.log("|Bot started, wait for every 3 minute to start the process.|");
+  console.log("============================================================");
   setInterval(async () => {
-    console.log("Started process reserve license.");
+    console.log("===============================================");
+    console.log("|       Started process reserve license.      |");
+    console.log("===============================================");
     await main();
-  }, 60000);
+    console.log("===============================================");
+    console.log("|       Finished process reserve license.     |");
+    console.log("|       Wait for every 3 minute to start bot  |");
+    console.log("===============================================");
+  }, 180000);
 })();
