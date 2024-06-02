@@ -1,50 +1,69 @@
 const puppeteer = require("puppeteer");
 require("dotenv").config();
 
-async function login(page, url) {
-  await page.goto(url, {
-    waitUntil: "domcontentloaded",
-  });
+async function login(browser, page, url) {
+  try {
+    await page.goto(url, {
+      waitUntil: "domcontentloaded",
+    });
 
-  // fill username
-  await page.waitForSelector("#LoginForm_username", { visible: true });
-  await page.type("#LoginForm_username", process.env.USERNAME);
+    // fill username
+    await page.waitForSelector("#LoginForm_username", { visible: true });
+    await page.type("#LoginForm_username", process.env.USERNAME);
 
-  // select domain
-  await page.select("select[name='LoginForm[domain]']", process.env.DOMAIN);
+    // select domain
+    await page.select("select[name='LoginForm[domain]']", process.env.DOMAIN);
 
-  // fill password
-  await page.waitForSelector("#LoginForm_password", { visible: true });
-  await page.type("#LoginForm_password", process.env.PASSWORD);
+    // fill password
+    await page.waitForSelector("#LoginForm_password", { visible: true });
+    await page.type("#LoginForm_password", process.env.PASSWORD);
 
-  await page.click('button[type="submit"]');
-  console.log("Successfully filled in username and password");
+    await page.click('button[type="submit"]');
+    console.log("Successfully filled in username and password");
+  } catch (error) {
+    browser.close();
+  }
 }
 
-async function openWebSiteKKUSoftwareLicense(page) {
-  await page.goto(process.env.URL, {
-    waitUntil: "domcontentloaded",
-  });
+async function openWebSiteKKUSoftwareLicense(browser, page) {
+  try {
+    await page.goto(process.env.URL, {
+      waitUntil: "domcontentloaded",
+    });
 
-  await page.click('button[value="kkumail"]');
-  console.log("Successfully opened KKU Software License website");
+    await page.click('button[value="kkumail"]');
+    console.log("Successfully opened KKU Software License website");
 
-  return { url: page.url() };
+    return { url: page.url() };
+  } catch (error) {
+    console.log("Not found KKU Software License website");
+    browser.close();
+  }
 }
 
-async function selectedDayLicense(page) {
-  await page.waitForNavigation({ waitUntil: ["load", "networkidle2"] });
-  await page.select("select[name='token_duration']", process.env.DURATION);
-  await page.click('button[name="authorize"]');
-  console.log("Successfully selected day license");
-  return { url: page.url() };
+async function selectedDayLicense(browser, page) {
+  try {
+    await page.waitForNavigation({ waitUntil: ["load", "networkidle2"] });
+    await page.select("select[name='token_duration']", process.env.DURATION);
+    await page.click('button[name="authorize"]');
+    console.log("Successfully selected day license");
+    return { url: page.url() };
+  } catch (error) {
+    console.log("Not found day license");
+    browser.close();
+  }
 }
 
-async function selectedAdobeCreativeCloud(page, url) {
-  await page.goto(url);
-  await page.waitForSelector(".button.btn-reserve", { timeout: 5000 });
-  await page.click(".button.btn-reserve");
-  console.log("Successfully selected Adobe Creative Cloud");
+async function selectedAdobeCreativeCloud(browser, page, url) {
+  try {
+    await page.goto(url);
+    await page.waitForSelector(".button.btn-reserve", { timeout: 5000 });
+    await page.click(".button.btn-reserve");
+    console.log("Successfully selected Adobe Creative Cloud");
+  } catch (error) {
+    console.log("Not found Adobe Creative Cloud");
+    browser.close();
+  }
 }
 
 async function main() {
@@ -56,18 +75,18 @@ async function main() {
   const page = await browser.newPage();
   await page.setViewport({ width: 1280, height: 800 });
 
-  const kkuLicense = await openWebSiteKKUSoftwareLicense(page);
-  await login(page, kkuLicense.url);
-  const dayLicense = await selectedDayLicense(page);
-  await selectedAdobeCreativeCloud(page, dayLicense.url);
+  const kkuLicense = await openWebSiteKKUSoftwareLicense(browser, page);
+  await login(browser, page, kkuLicense.url);
+  const dayLicense = await selectedDayLicense(browser, page);
+  await selectedAdobeCreativeCloud(browser, page, dayLicense.url);
 
   // Reserve license
   try {
     const button = await page.$("button#btn_reserve.btn-reserve");
     if (button) {
-      // await button.click();
+      await button.click();
       await browser.close();
-      console.log("Button Reserve found");
+      console.log("Reserve license successfully.");
     } else {
       await browser.close();
       console.log("Button Reserve not found bot will try again.");
@@ -80,6 +99,7 @@ async function main() {
 
 (async () => {
   console.log("Bot started, wait for every 1 minute to start the process.");
+  await main();
   setInterval(async () => {
     console.log("Started process reserve license.");
     await main();
