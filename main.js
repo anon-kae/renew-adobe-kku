@@ -21,7 +21,7 @@ async function login(browser, page, url) {
     await page.click('button[type="submit"]');
     console.log("Successfully filled in username and password");
   } catch (error) {
-    browser.close();
+    await browser.close();
   }
 }
 
@@ -37,7 +37,7 @@ async function openWebSiteKKUSoftwareLicense(browser, page) {
     return { url: page.url() };
   } catch (error) {
     console.log("Not found KKU Software License website");
-    browser.close();
+    await browser.close();
   }
 }
 
@@ -50,7 +50,7 @@ async function selectedDayLicense(browser, page) {
     return { url: page.url() };
   } catch (error) {
     console.log("Not found day license");
-    browser.close();
+    await browser.close();
   }
 }
 
@@ -62,29 +62,33 @@ async function selectedAdobeCreativeCloud(browser, page, url) {
     console.log("Successfully selected Adobe Creative Cloud");
   } catch (error) {
     console.log("Not found Adobe Creative Cloud");
-    browser.close();
+    await browser.close();
   }
 }
 
 async function main() {
   const browser = await puppeteer.launch({
     headless: "new",
-    executablePath: "/usr/bin/google-chrome",
-    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    // executablePath: "/usr/bin/google-chrome",
+    // args: ["--no-sandbox", "--disable-setuid-sandbox"],
   });
   const page = await browser.newPage();
   await page.setViewport({ width: 1280, height: 800 });
 
+  // open website KKU Software License
   const kkuLicense = await openWebSiteKKUSoftwareLicense(browser, page);
+  // login
   await login(browser, page, kkuLicense.url);
+  // select day license
   const dayLicense = await selectedDayLicense(browser, page);
+  // select Adobe Creative Cloud
   await selectedAdobeCreativeCloud(browser, page, dayLicense.url);
 
   // Reserve license
   try {
     const button = await page.$("button#btn_reserve.btn-reserve");
     if (button) {
-      await button.click();
+      await page.click("#btn_reserve.btn-reserve");
       await browser.close();
       console.log("Reserve license successfully.");
     } else {
@@ -99,7 +103,6 @@ async function main() {
 
 (async () => {
   console.log("Bot started, wait for every 1 minute to start the process.");
-  await main();
   setInterval(async () => {
     console.log("Started process reserve license.");
     await main();
